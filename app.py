@@ -35,11 +35,6 @@ if not check_password():
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
 def load_data():
-# ... (rest of your code remains the same)
-
-# --- 2. LOAD EXCEL FILE ---
-@st.cache_data
-def load_data():
     file_name = "quiz_bank.xlsx"
     if not os.path.exists(file_name):
         st.error(f"Error: {file_name} not found.")
