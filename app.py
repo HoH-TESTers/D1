@@ -113,23 +113,23 @@ else:
         if st.button("Next Question"):
             st.session_state.current_index += 1
             st.rerun()
-        else:
-            # SAFETY GATE: Only run if questions exist
-            if st.session_state.questions is not None:
-                final_score = st.session_state.score
-                total_qs = len(st.session_state.questions)
+    else:
+        # SAFETY GATE: Only run if questions exist
+        if st.session_state.questions is not None:
+            final_score = st.session_state.score
+            total_qs = len(st.session_state.questions)
                 
-                st.write(f"## Quiz Complete")
-                st.write(f"### Final Score: {final_score} / {total_qs}")
+            st.write(f"## Quiz Complete")
+            st.write(f"### Final Score: {final_score} / {total_qs}")
                 
-                # Simple Pass/Fail Logic
-                if (final_score / total_qs) >= 0.7:
-                    st.success("Result: PASS")
-                else:
-                    st.error("Result: FAIL")
+            # Simple Pass/Fail Logic
+            if (final_score / total_qs) >= 0.7:
+                st.success("Result: PASS")
+            else:
+                st.error("Result: FAIL")
             else:
                 st.info("Please select a quiz size above to begin.")
 
-            if st.button("Restart Quiz"):
-                st.session_state.quiz_started = False
-                st.rerun()
+        if st.button("Restart Quiz"):
+            st.session_state.quiz_started = False
+            st.rerun()
