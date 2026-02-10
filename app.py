@@ -74,7 +74,7 @@ def start_quiz(n):
     st.session_state.score = 0
 
 # --- 5. INTERFACE ---
-st.title("Protected Quiz App")
+st.title("Distribution One Practice Test")
 
 if not st.session_state.quiz_started:
     st.write("### Choose number of questions:")
