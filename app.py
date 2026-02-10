@@ -4,60 +4,38 @@ import random
 import re
 import os
 
-def check_password():
-    def password_entered():
-        if st.session_state["password"] in st.secrets["passwords"].values():
-            st.session_state["password_correct"] = True
-            del st.session_state["password"] 
-        else:
-            st.session_state["password_correct"] = False
-
-    # If the user hasn't succeeded yet, show the input
-    if not st.session_state.get("password_correct", False):
-        st.text_input("Password", type="password", on_change=password_entered, key="password")
-        
-        # Show the error message only if they've actually tried and failed
-        if "password_correct" in st.session_state:
-            st.error("😕 Password incorrect")
-        return False
-    
-    return True
-
-# --- 2. RUN THE APP ---
-if check_password():
-    # ALL YOUR EXISTING CODE GOES INSIDE THIS BLOCK
-    st.title("D1 Water License Study Help")
-    
-    # Example of where your quiz loading starts:
-    # df = pd.read_excel("quiz_bank.xlsx")
-    # ... rest of your quiz code ...
 # --- 1. PASSWORD PROTECTION ---
 def check_password():
     """Returns True if the user had the correct password."""
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == "Dh0l#isabh0l3":  ## <--- Password Updated
+        # Note: Using your updated password from the script
+        if st.session_state["password_input"] == "Dh0l#isabh0l3": 
             st.session_state["password_correct"] = True
-            del st.session_state["password"]  # don't store password
+            del st.session_state["password_input"]  # don't store password
         else:
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        st.text_input(
-            "Enter Password to access the Quiz", type="password", on_change=password_entered, key="password"
-        )
+        # First time: Show input
+        st.text_input("Enter Password to access the Quiz", type="password", on_change=password_entered, key="password_input")
         return False
     elif not st.session_state["password_correct"]:
-        st.text_input(
-            "Enter Password to access the Quiz", type="password", on_change=password_entered, key="password"
-        )
+        # Wrong password: Show input + error
+        st.text_input("Enter Password to access the Quiz", type="password", on_change=password_entered, key="password_input")
         st.error("😕 Password incorrect")
         return False
     else:
+        # Password correct
         return True
 
 if not check_password():
     st.stop()
+
+# --- 2. LOAD EXCEL FILE ---
+@st.cache_data
+def load_data():
+# ... (rest of your code remains the same)
 
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
