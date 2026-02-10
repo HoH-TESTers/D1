@@ -112,7 +112,7 @@ else:
     else:
     # Everything inside this block MUST be indented once
     # Calculate percentage based on your existing score variables
-    percent_score = (score / total_questions) * 100
+        percent_score = (score / total_questions) * 100
 
     # Create the Pressure Gauge
     fig = go.Figure(go.Indicator(
