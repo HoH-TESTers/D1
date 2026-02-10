@@ -116,7 +116,7 @@ else:
             st.session_state.current_index += 1
             st.rerun()
             
-    # SHOW RESULTS (This else matches line 87 - "if idx < len(questions)")
+    # SHOW RESULTS 
     else:
         if st.session_state.questions is not None:
             final_score = st.session_state.score
@@ -129,8 +129,6 @@ else:
                 st.success("Result: PASS")
             else:
                 st.error("Result: FAIL")
-        else:
-            st.info("Please select a quiz size above to begin.")
 
         if st.button("Restart Quiz"):
             st.session_state.quiz_started = False
