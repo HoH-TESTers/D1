@@ -1,3 +1,4 @@
+import plotly.graph_objects as go
 import streamlit as st
 import pandas as pd
 import random
@@ -109,8 +110,44 @@ else:
             st.session_state.current_index += 1
             st.rerun()
     else:
-        st.balloons()
-        st.write(f"## 🎉 Quiz Complete! Score: {st.session_state.score}/{len(questions)}")
+# --- REPLACE OLD CELEBRATION CODE WITH THIS ---
+
+# Calculate percentage based on your existing score variables
+# (Ensure 'score' and 'total_questions' match your variable names)
+percent_score = (score / total_questions) * 100
+
+# Create the Pressure Gauge
+fig = go.Figure(go.Indicator(
+    mode = "gauge+number",
+    value = percent_score,
+    title = {'text': "System Pressure (%)"},
+    gauge = {
+        'axis': {'range': [0, 100]},
+        'bar': {'color': "darkblue"},
+        'steps': [
+            {'range': [0, 70], 'color': "#ff4b4b"},  # Red area
+            {'range': [70, 100], 'color': "#09ab3b"} # Green area
+        ],
+        'threshold': {
+            'line': {'color': "black", 'width': 4},
+            'thickness': 0.75,
+            'value': 70
+        }
+    }
+))
+
+# Display the Gauge
+st.plotly_chart(fig, use_container_width=True)
+
+# Conditional Feedback
+if percent_score >= 70:
+    st.success("✅ PASS: System Integrity Maintained")
+    st.write("### 🚒 Fire Hydrant Secured")
+    # Optional: st.balloons() if you want a little flair, or leave out for pro look
+else:
+    st.error("❌ FAIL")
+    st.info("Looks like we are still working on that leak... 🌊")
+    st.snow()  # This creates the falling 'water spray' effect
         if st.button("Restart Quiz"):
             st.session_state.quiz_started = False
             st.rerun()
