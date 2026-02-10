@@ -4,26 +4,24 @@ import random
 import re
 import os
 
-
-# --- 1. PASSWORD CHECK LOGIC ---
 def check_password():
     def password_entered():
-        # This checks if the entered password matches ANY password in your secrets
         if st.session_state["password"] in st.secrets["passwords"].values():
             st.session_state["password_correct"] = True
             del st.session_state["password"] 
         else:
             st.session_state["password_correct"] = False
 
-    if "password_correct" not in st.session_state:
+    # If the user hasn't succeeded yet, show the input
+    if not st.session_state.get("password_correct", False):
         st.text_input("Password", type="password", on_change=password_entered, key="password")
+        
+        # Show the error message only if they've actually tried and failed
+        if "password_correct" in st.session_state:
+            st.error("😕 Password incorrect")
         return False
-    elif not st.session_state["password_correct"]:
-        st.text_input("Password", type="password", on_change=password_entered, key="password")
-        st.error("😕 Password incorrect")
-        return False
-    else:
-        return True
+    
+    return True
 
 # --- 2. RUN THE APP ---
 if check_password():
