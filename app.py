@@ -113,9 +113,9 @@ else:
         if st.button("Next Question"):
             st.session_state.current_index += 1
             st.rerun()
-    else:
-        st.balloons()
-        st.write(f"## 🎉 Quiz Complete! Score: {st.session_state.score}/{len(questions)}")
-        if st.button("Restart Quiz"):
-            st.session_state.quiz_started = False
-            st.rerun()
+        else:
+            st.balloons()
+            st.write(f"## 🎉 Quiz Complete! Score: {st.session_state.score}/{len(questions)}")
+            if st.button("Restart Quiz"):
+                st.session_state.quiz_started = False
+                st.rerun()
