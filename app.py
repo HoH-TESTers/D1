@@ -9,28 +9,12 @@ def check_password():
     """Returns True if the user had the correct password."""
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        # Note: Using your updated password from the script
-        if st.session_state["password_input"] == "Dh0l#isabh0l3": 
+        # This now checks against any password you've listed in your Secrets
+        if st.session_state["password_input"] in st.secrets["passwords"].values():
             st.session_state["password_correct"] = True
             del st.session_state["password_input"]  # don't store password
         else:
             st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        # First time: Show input
-        st.text_input("Enter Password to access the Quiz", type="password", on_change=password_entered, key="password_input")
-        return False
-    elif not st.session_state["password_correct"]:
-        # Wrong password: Show input + error
-        st.text_input("Enter Password to access the Quiz", type="password", on_change=password_entered, key="password_input")
-        st.error("😕 Password incorrect")
-        return False
-    else:
-        # Password correct
-        return True
-
-if not check_password():
-    st.stop()
 
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
