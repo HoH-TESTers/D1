@@ -5,7 +5,7 @@ import random
 import re
 import os
 
-# --- 1. PASSWORD PROTECTION ---
+# --- 1. PASSWORD PROTECTION (MUST BE FIRST) ---
 def check_password():
     if "password_correct" not in st.session_state:
         st.session_state["password_correct"] = False
@@ -14,6 +14,7 @@ def check_password():
         st.title("🔒 Password Required")
         user_input = st.text_input("Enter Temporary Password", type="password")
         if st.button("Unlock Test"):
+            # Ensure you have 'passwords' and 'active_list' set in Streamlit Secrets
             if user_input in st.secrets["passwords"]["active_list"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
@@ -22,21 +23,23 @@ def check_password():
         return False
     return True
 
-# --- 2. LOAD DATA ---
-@st.cache_data
-def load_data():
-    file_name = "quiz_bank.xlsx"
-    if not os.path.exists(file_name):
-        return pd.DataFrame()
-    try:
-        df = pd.read_excel(file_name)
-        df.columns = df.columns.str.strip()
-        return df
-    except Exception as e:
-        return pd.DataFrame()
-
-# Start the App Logic
+# --- 2. THE MAIN APP ---
 if check_password():
+    # Only Load Data after password is correct
+    @st.cache_data
+    def load_data():
+        file_name = "quiz_bank.xlsx"
+        if not os.path.exists(file_name):
+            st.error("Data file 'quiz_bank.xlsx' not found!")
+            return pd.DataFrame()
+        try:
+            df = pd.read_excel(file_name)
+            df.columns = df.columns.str.strip()
+            return df
+        except Exception as e:
+            st.error(f"Error loading Excel: {e}")
+            return pd.DataFrame()
+
     df = load_data()
 
     # Initialize Session State
@@ -72,7 +75,6 @@ if check_password():
         idx = st.session_state.current_index
         questions = st.session_state.questions
         
-        # --- QUIZ IN PROGRESS ---
         if idx < len(questions):
             row = questions.iloc[idx]
             st.write(f"**Question {idx + 1} of {len(questions)}**")
@@ -105,8 +107,8 @@ if check_password():
                 st.session_state.current_index += 1
                 st.rerun()
 
-        # --- QUIZ FINISHED (Correctly Indented) ---
         else:
+            # RESULTS SCREEN
             score = st.session_state.score
             total = len(questions)
             percent_score = (score / total) * 100
