@@ -4,7 +4,6 @@ import random
 import re
 import os
 
-import streamlit as st
 
 # --- 1. PASSWORD CHECK LOGIC ---
 def check_password():
