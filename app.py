@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import random
@@ -10,31 +9,28 @@ def check_password():
     """Returns True if the user had the correct password."""
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if st.session_state["password"] == "Dh0l#isabh0l3":  ## <--- CHANGE YOUR PASSWORD HERE
+        if st.session_state["password"] == "Dh0l#isabh0l3":  ## <--- Password Updated
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # don't store password
         else:
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        # First run, show input for password.
         st.text_input(
             "Enter Password to access the Quiz", type="password", on_change=password_entered, key="password"
         )
         return False
     elif not st.session_state["password_correct"]:
-        # Password not correct, show input + error.
         st.text_input(
             "Enter Password to access the Quiz", type="password", on_change=password_entered, key="password"
         )
         st.error("😕 Password incorrect")
         return False
     else:
-        # Password correct.
         return True
 
 if not check_password():
-    st.stop()  # Halt execution until password is correct
+    st.stop()
 
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
@@ -86,11 +82,14 @@ if not st.session_state.quiz_started:
 else:
     idx = st.session_state.current_index
     questions = st.session_state.questions
+    
+    # Check if there are still questions to answer
     if idx < len(questions):
         row = questions.iloc[idx]
         st.write(f"**Question {idx + 1} of {len(questions)}**")
         st.write(row['Question Text'])
         is_fill = pd.isna(row['Correct Answer (Letter)'])
+        
         with st.form(key=f"q_{idx}"):
             if not is_fill:
                 lines = str(row['Question Text']).splitlines()
@@ -98,37 +97,40 @@ else:
                 user_ans = st.radio("Select your answer:", choices)
             else:
                 user_ans = st.text_input("Type your answer:")
+            
             if st.form_submit_button("Submit Answer"):
                 if not is_fill:
                     correct = str(row['Correct Answer (Letter)']).upper()
                     is_correct = user_ans[0].upper() == correct if user_ans else False
                 else:
                     is_correct = user_ans.strip().lower() in str(row['Answer Text']).lower()
+                
                 if is_correct:
                     st.success("✅ Correct!")
                     st.session_state.score += 1
                 else:
                     st.error(f"❌ Incorrect. Answer: {row['Answer Text']}")
                 st.info(f"**Source:** {row['Book Title']} | **Summary:** {row['Explanation / Summary']}")
+        
         if st.button("Next Question"):
             st.session_state.current_index += 1
             st.rerun()
+            
+    # SHOW RESULTS (This else matches line 87 - "if idx < len(questions)")
     else:
-        # SAFETY GATE: Only run if questions exist
         if st.session_state.questions is not None:
             final_score = st.session_state.score
             total_qs = len(st.session_state.questions)
-                
+            
             st.write(f"## Quiz Complete")
             st.write(f"### Final Score: {final_score} / {total_qs}")
-                
-            # Simple Pass/Fail Logic
+            
             if (final_score / total_qs) >= 0.7:
                 st.success("Result: PASS")
             else:
                 st.error("Result: FAIL")
-            else:
-                st.info("Please select a quiz size above to begin.")
+        else:
+            st.info("Please select a quiz size above to begin.")
 
         if st.button("Restart Quiz"):
             st.session_state.quiz_started = False
