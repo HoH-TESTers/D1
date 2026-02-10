@@ -4,6 +4,36 @@ import random
 import re
 import os
 
+import streamlit as st
+
+# --- 1. PASSWORD CHECK LOGIC ---
+def check_password():
+    def password_entered():
+        # This checks if the entered password matches ANY password in your secrets
+        if st.session_state["password"] in st.secrets["passwords"].values():
+            st.session_state["password_correct"] = True
+            del st.session_state["password"] 
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        st.text_input("Password", type="password", on_change=password_entered, key="password")
+        return False
+    elif not st.session_state["password_correct"]:
+        st.text_input("Password", type="password", on_change=password_entered, key="password")
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        return True
+
+# --- 2. RUN THE APP ---
+if check_password():
+    # ALL YOUR EXISTING CODE GOES INSIDE THIS BLOCK
+    st.title("D1 Water License Study Help")
+    
+    # Example of where your quiz loading starts:
+    # df = pd.read_excel("quiz_bank.xlsx")
+    # ... rest of your quiz code ...
 # --- 1. PASSWORD PROTECTION ---
 def check_password():
     """Returns True if the user had the correct password."""
