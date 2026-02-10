@@ -4,6 +4,32 @@ import random
 import re
 import os
 
+import streamlit as st
+
+# 1. This function handles the login logic
+def check_password():
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
+
+    if not st.session_state["password_correct"]:
+        st.title("🔒 Password Required")
+        user_input = st.text_input("Enter Temporary Password", type="password")
+        if st.button("Unlock Test"):
+            # This looks at the secrets you will set in Step B
+            if user_input in st.secrets["passwords"]["active_list"]:
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("Invalid password.")
+        return False
+    return True
+
+# 2. Wrap your entire existing test code inside this 'if'
+if check_password():
+    # --- ALL YOUR CURRENT TEST CODE GOES HERE ---
+    st.title("Distribution One Practice Test") 
+    # ... rest of your code ...
+
 
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
