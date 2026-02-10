@@ -144,7 +144,7 @@ if percent_score >= 70:
     st.success("✅ PASS: System Integrity Maintained")
     st.write("### 🚒 Fire Hydrant Secured")
     # Optional: st.balloons() if you want a little flair, or leave out for pro look
-else:
+    else:
     st.error("❌ FAIL")
     st.info("Looks like we are still working on that leak... 🌊")
     st.snow()  # This creates the falling 'water spray' effect
