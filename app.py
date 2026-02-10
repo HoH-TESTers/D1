@@ -108,39 +108,45 @@ if check_password():
                 st.rerun()
 
         else:
-            # RESULTS SCREEN
-            score = st.session_state.score
-            total = len(questions)
-            percent_score = (score / total) * 100
-
-            fig = go.Figure(go.Indicator(
-                mode = "gauge+number",
-                value = percent_score,
-                title = {'text': "System Pressure (%)"},
-                gauge = {
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': "darkblue"},
-                    'steps': [
-                        {'range': [0, 70], 'color': "#ff4b4b"},
-                        {'range': [70, 100], 'color': "#09ab3b"}
-                    ],
-                    'threshold': {
-                        'line': {'color': "black", 'width': 4},
-                        'thickness': 0.75,
-                        'value': 70
-                    }
-                }
-            ))
-            st.plotly_chart(fig, use_container_width=True)
-
-            if percent_score >= 70:
-                st.success("✅ PASS: System Integrity Maintained")
-                st.write("### 🚒 Fire Hydrant Secured")
-            else:
-                st.error("❌ FAIL")
-                st.info("Looks like we are still working on that leak... 🌊")
-                st.snow()
+            # SAFETY CHECK: Only run results if questions were actually loaded
+            if st.session_state.questions is not None:
+                score = st.session_state.score
+                questions = st.session_state.questions
+                total = len(questions)
                 
+                # Prevent division by zero if questions list is somehow empty
+                percent_score = (score / total) * 100 if total > 0 else 0
+
+                fig = go.Figure(go.Indicator(
+                    mode = "gauge+number",
+                    value = percent_score,
+                    title = {'text': "System Pressure (%)"},
+                    gauge = {
+                        'axis': {'range': [0, 100]},
+                        'bar': {'color': "darkblue"},
+                        'steps': [
+                            {'range': [0, 70], 'color': "#ff4b4b"},
+                            {'range': [70, 100], 'color': "#09ab3b"}
+                        ],
+                        'threshold': {
+                            'line': {'color': "black", 'width': 4},
+                            'thickness': 0.75,
+                            'value': 70
+                        }
+                    }
+                ))
+                st.plotly_chart(fig, use_container_width=True)
+
+                if percent_score >= 70:
+                    st.success("✅ PASS: System Integrity Maintained")
+                    st.write("### 🚒 Fire Hydrant Secured")
+                else:
+                    st.error("❌ FAIL")
+                    st.info("Looks like we are still working on that leak... 🌊")
+                    st.snow()
+            else:
+                st.warning("Please select a quiz size above to begin.")
+
             if st.button("Restart Quiz"):
                 st.session_state.quiz_started = False
                 st.rerun()
