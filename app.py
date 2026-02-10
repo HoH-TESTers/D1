@@ -109,7 +109,7 @@ else:
         if st.button("Next Question"):
             st.session_state.current_index += 1
             st.rerun()
-   else:
+    else:
     # Everything inside this block MUST be indented once
     # Calculate percentage based on your existing score variables
     percent_score = (score / total_questions) * 100
