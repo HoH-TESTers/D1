@@ -7,14 +7,37 @@ import os
 # --- 1. PASSWORD PROTECTION ---
 def check_password():
     """Returns True if the user had the correct password."""
+
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        # This now checks against any password you've listed in your Secrets
         if st.session_state["password_input"] in st.secrets["passwords"].values():
             st.session_state["password_correct"] = True
             del st.session_state["password_input"]  # don't store password
         else:
             st.session_state["password_correct"] = False
+
+    # Check if the user has already logged in
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Display the login form
+    st.text_input(
+        "Please enter the password to access the test", 
+        type="password", 
+        on_change=password_entered, 
+        key="password_input"
+    )
+    
+    # If the password was wrong, show an error
+    if "password_correct" in st.session_state and not st.session_state["password_correct"]:
+        st.error("😕 Password incorrect")
+    
+    return False
+
+# --- ACTIVATE THE GATE ---
+# This is the crucial part you were missing!
+if not check_password():
+    st.stop()  # Halt execution of everything below this line until authenticated
 
 # --- 2. LOAD EXCEL FILE ---
 @st.cache_data
