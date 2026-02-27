@@ -97,29 +97,34 @@ else:
         st.write(row['Question Text'])
         is_fill = pd.isna(row['Correct Answer (Letter)'])
         
-       if not is_fill:
+      # Create a form to group the input and the submit button
+        with st.form("quiz_form"):
+            if not is_fill:
                 lines = str(row['Question Text']).splitlines()
                 choices = [l.strip() for l in lines if re.match(r'^[a-dA-D]\.', l.strip())]
-                
-                # If no A/B/C/D choices were found in the text, 
-                # use the Answer Text as the only selectable option to prevent a crash.
                 if not choices:
                     choices = [str(row['Answer Text'])]
-                
                 user_ans = st.radio("Select your answer:", choices)
             else:
                 user_ans = st.text_input("Type your answer:")
             
-            if st.form_submit_button("Submit Answer"):
-                if not is_fill:
-                    correct = str(row['Correct Answer (Letter)']).upper()
-                    is_correct = user_ans[0].upper() == correct if user_ans else False
-                else:
-                    is_correct = user_ans.strip().lower() in str(row['Answer Text']).lower()
-                
-                if is_correct:
-                    st.success("✅ Correct!")
-                    st.session_state.score += 1
+            # This button is now safely inside the form
+            submitted = st.form_submit_button("Submit Answer")
+
+        if submitted:
+            if not is_fill:
+                correct_letter = str(row['Correct Answer (Letter)']).upper()
+                is_correct = user_ans[0].upper() == correct_letter if user_ans else False
+            else:
+                # Allows multiple answers if they are separated by commas in Column C
+                valid_answers = [a.strip().lower() for a in str(row['Answer Text']).split(',')]
+                is_correct = user_ans.strip().lower() in valid_answers
+            
+            if is_correct:
+                st.success("✅ Correct!")
+                st.session_state.score += 1
+            else:
+                st.error(f"❌ Incorrect. Answer: {row['Answer Text']}")
                 else:
                     st.error(f"❌ Incorrect. Answer: {row['Answer Text']}")
                 st.info(f"**Source:** {row['Book Title']} | **Summary:** {row['Explanation / Summary']}")
