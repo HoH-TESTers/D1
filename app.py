@@ -97,10 +97,15 @@ else:
         st.write(row['Question Text'])
         is_fill = pd.isna(row['Correct Answer (Letter)'])
         
-        with st.form(key=f"q_{idx}"):
-            if not is_fill:
+       if not is_fill:
                 lines = str(row['Question Text']).splitlines()
                 choices = [l.strip() for l in lines if re.match(r'^[a-dA-D]\.', l.strip())]
+                
+                # If no A/B/C/D choices were found in the text, 
+                # use the Answer Text as the only selectable option to prevent a crash.
+                if not choices:
+                    choices = [str(row['Answer Text'])]
+                
                 user_ans = st.radio("Select your answer:", choices)
             else:
                 user_ans = st.text_input("Type your answer:")
