@@ -111,12 +111,12 @@ else:
             # This button is now safely inside the form
             submitted = st.form_submit_button("Submit Answer")
 
-        if submitted:
+       if submitted:
             if not is_fill:
                 correct_letter = str(row['Correct Answer (Letter)']).upper()
                 is_correct = user_ans[0].upper() == correct_letter if user_ans else False
             else:
-                # Allows multiple answers if they are separated by commas in Column C
+                # This handles your "multiple answers in column C" logic
                 valid_answers = [a.strip().lower() for a in str(row['Answer Text']).split(',')]
                 is_correct = user_ans.strip().lower() in valid_answers
             
@@ -125,10 +125,9 @@ else:
                 st.session_state.score += 1
             else:
                 st.error(f"❌ Incorrect. Answer: {row['Answer Text']}")
-                else:
-                    st.error(f"❌ Incorrect. Answer: {row['Answer Text']}")
-                st.info(f"**Source:** {row['Book Title']} | **Summary:** {row['Explanation / Summary']}")
-        
+            
+            # This info box shows the explanation regardless of the result
+            st.info(f"**Source:** {row['Book Title']} | **Summary:** {row['Explanation / Summary']}")
         if st.button("Next Question"):
             st.session_state.current_index += 1
             st.rerun()
